@@ -18,11 +18,13 @@ def load_data(label_file, translation_file):
     with open(translation_file) as f:
         df_translated.columns = json.load(f)
 
-    df_translated = df_translated[
-        ~df_translated["Conduct Difficult Conversations"].isna()
-    ]
+    # display(df_translated[df_translated["Conduct Difficult Conversations"].isna()])
 
-    print(f"Number of participants removed: {len(df_labels) - len(df_translated)}")
+    # df_translated = df_translated[
+    #     ~df_translated["Conduct Difficult Conversations"].isna()
+    # ]
+
+    # print(f"Number of participants removed: {len(df_labels) - len(df_translated)}")
 
     # Separate in two groups
     df_translated.insert(
@@ -240,14 +242,15 @@ def get_group_sizes(n):
     return group_sizes
 
 
-def set_group_size(df):
+def set_group_size(df, verbose=0):
     study_group_list = list(df["study_group"])
     for value in list(
         (df["study_group"].value_counts() > 5).where(lambda x: x == True).dropna().index
     ):
         n = df["study_group"].value_counts()[value]
         group_sizes = get_group_sizes(n)
-        print(f"Value {value} has {n} occurences. Group sizes: {group_sizes}")
+        if verbose:
+            print(f"Value {value} has {n} occurences. Group sizes: {group_sizes}")
         counter = 0
         group = 0
         for i, elem in enumerate(study_group_list):
@@ -293,7 +296,11 @@ def group_by_similarity(
     df_similar.insert(
         len(df_similar.columns), "study_group", df_similar["available_labels"] + 1000000
     )
-    set_group_size(df_similar)
+    set_group_size(df_similar, verbose=verbose)
+
+    """Change study group to string"""
+    df_similar["study_group"] = df_similar["study_group"].astype(str)
+
     display(
         df_similar[
             [
@@ -353,7 +360,11 @@ def group_by_complementarity(
     df_comp.insert(
         len(df_comp.columns), "study_group", df_comp["available_labels"] + 2000000
     )
-    set_group_size(df_comp)
+    set_group_size(df_comp, verbose=verbose)
+
+    """Change study group to string"""
+    df_comp["study_group"] = df_comp["study_group"].astype(str)
+
     display(
         df_comp[
             [
