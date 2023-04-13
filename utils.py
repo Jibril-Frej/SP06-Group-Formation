@@ -5,13 +5,13 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import euclidean, pdist, squareform
 from sklearn.cluster import SpectralClustering
+from IPython.display import display
 
 pd.options.mode.chained_assignment = None
 random.seed(123)
 
 
-def load_data(data_path, data_file, label_file, translation_file, verbose=0):
-    df = pd.read_csv(data_file, sep=";")
+def load_data(label_file, translation_file):
     df_labels = pd.read_csv(label_file, sep=";")
     df_translated = df_labels
 
@@ -21,6 +21,8 @@ def load_data(data_path, data_file, label_file, translation_file, verbose=0):
     df_translated = df_translated[
         ~df_translated["Conduct Difficult Conversations"].isna()
     ]
+
+    print(f"Number of participants removed: {len(df_labels) - len(df_translated)}")
 
     # Separate in two groups
     df_translated.insert(
@@ -44,7 +46,6 @@ def get_labels(m_interests, metric="euclidean", gamma=0.01):
 def hierarchical_spectral(
     m_matrix, labels, metric="euclidean", gamma=0.01, offset=2, verbose=0
 ):
-
     unique_labels, counts_labels = np.unique(labels, return_counts=True)
     if verbose:
         print(unique_labels, counts_labels)
