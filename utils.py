@@ -18,14 +18,6 @@ def load_data(label_file, translation_file):
     with open(translation_file) as f:
         df_translated.columns = json.load(f)
 
-    # display(df_translated[df_translated["Conduct Difficult Conversations"].isna()])
-
-    # df_translated = df_translated[
-    #     ~df_translated["Conduct Difficult Conversations"].isna()
-    # ]
-
-    # print(f"Number of participants removed: {len(df_labels) - len(df_translated)}")
-
     # Separate in two groups
     df_translated.insert(
         len(df_translated.columns),
